@@ -1,0 +1,32 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "Humming Bird Client",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Humming-Bird-Music/client.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Humming-Bird-Music/client/issues"
+  },
+  "homepage": "https://github.com/Humming-Bird-Music/client#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "buefy": "^0.8.5",
+    "sweetalert2": "^8.18.3",
+    "toastr": "^2.1.4",
+    "vue": "^2.6.10",
+    "vue-hot-reload-api": "^2.3.4"
+  },
+  "devDependencies": {
+    "@vue/component-compiler-utils": "^3.0.0",
+    "vue-template-compiler": "^2.6.10"
+  }
+}
