@@ -23,7 +23,7 @@
     "buefy": "^0.8.5",
     "sweetalert2": "^8.18.3",
     "toastr": "^2.1.4",
-    "vue": "^2.5.13",
+    "vue": "^2.6.10",
     "vue-aplayer": "^1.6.1",
     "vue-hot-reload-api": "^2.3.4"
   },

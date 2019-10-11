@@ -69,22 +69,24 @@ export default {
       this.music = file
     },
     handleUpload() {
-      console.log(this.music.name)
-      console.log('asdfasfd', this.music[0])
+      swal.fire({
+        onOpen() {
+          swal.showLoading()
+        }
+      })
       let formData = new FormData()
-      formData.append('file', 'tai')
-      console.log(formData)
+      formData.append('music', this.music)
+      formData.set('title', this.title)
+      formData.set('artist', this.artist)
+      formData.set('album', this.album)
+      // console.log(formData.append)
       axios({
         method: 'post',
-        url: 'http://humming-bird.crowfx.online/musics',
-        data: {
-          title: this.title,
-          artist: this.artist,
-          album: this.album,
-          music: formData
-        },
+        url: 'http://localhost:3000/musics',
+        data: formData,
         headers: {
-          authorization: localStorage.getItem('token')
+          authorization: localStorage.getItem('token'),
+          'Content-Type': 'multipart/form-data'
         }
       })
         .then(({ data }) => {

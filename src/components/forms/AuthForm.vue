@@ -18,21 +18,11 @@
               </b-field>
 
               <b-field label="Email">
-                <b-input
-                  v-model="email"
-                  type="email"
-                  placeholder="john@doe.com"
-                  maxlength="30"
-                ></b-input>
+                <b-input v-model="email" type="email" placeholder="john@doe.com" maxlength="30"></b-input>
               </b-field>
 
               <b-field label="Password">
-                <b-input
-                  v-model="password"
-                  placeholder="secret"
-                  type="password"
-                  maxlength="30"
-                ></b-input>
+                <b-input v-model="password" placeholder="secret" type="password" maxlength="30"></b-input>
               </b-field>
               <div class="buttons">
                 <b-button native-type="submit" type="is-info">Register</b-button>
@@ -54,20 +44,11 @@
             <h1 class="title">Login</h1>
             <form @submit.prevent="handleLogin">
               <b-field label="Username / Email">
-                <b-input
-                  v-model="identity"
-                  placeholder="johndoe / john@doe.com"
-                  maxlength="30"
-                ></b-input>
+                <b-input v-model="identity" placeholder="johndoe / john@doe.com" maxlength="30"></b-input>
               </b-field>
 
               <b-field label="Password">
-                <b-input
-                  v-model="password"
-                  placeholder="secret"
-                  type="password"
-                  maxlength="30"
-                ></b-input>
+                <b-input v-model="password" placeholder="secret" type="password" maxlength="30"></b-input>
               </b-field>
               <div class="buttons">
                 <b-button native-type="submit" type="is-info">Log in</b-button>
@@ -88,6 +69,8 @@
 import axios from 'axios'
 import swal from 'sweetalert2'
 
+const host = 'http://humming-bird.crowfx.online'
+
 export default {
   name: 'RegisterForm',
   data() {
@@ -106,7 +89,7 @@ export default {
     handleRegister() {
       axios({
         method: 'post',
-        url: 'http://localhost:3000/users/register',
+        url: `${host}/users/register`,
         data: {
           username: this.username,
           email: this.email,
@@ -130,9 +113,10 @@ export default {
         })
     },
     handleLogin() {
+      console.log('============ Masuk ============')
       axios({
         method: 'post',
-        url: 'http://localhost:3000/users/login',
+        url: `${host}/users/login`,
         data: {
           identity: this.identity,
           password: this.password
