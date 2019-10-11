@@ -3,7 +3,12 @@
     <div v-if="isLogin" class="container">
       <div class="columns">
         <div class="column is-one-fifth">
-          <SideBar @browse="browseBtn" @upload="uploadBtn" @c-is-login="checkLogin"></SideBar>
+          <SideBar
+            @manage="manageBtn"
+            @browse="browseBtn"
+            @upload="uploadBtn"
+            @c-is-login="checkLogin"
+          ></SideBar>
         </div>
         <div class="column" style="border: 0px solid red">
           <div v-if="isBrowse">
@@ -18,6 +23,9 @@
           <div v-if="isUpload">
             <UploadMusic @uploaded="afterUpload"></UploadMusic>
           </div>
+          <div v-if="isManageMusic">
+            <ManageMusic :myMusics="myMusics"></ManageMusic>
+          </div>
         </div>
       </div>
     </div>
@@ -30,12 +38,14 @@
 
 <script>
 import axios from 'axios'
+import swal from 'sweetalert2'
 
 import SideBar from './components/SideBar.vue'
 import AuthForm from './components/forms/AuthForm.vue'
 import SearchBar from './components/SearchBar.vue'
 import Home from './components/Home.vue'
 import UploadMusic from './components/forms/UploadMusic.vue'
+import ManageMusic from './components/ManageMusic.vue'
 
 export default {
   name: 'App',
@@ -44,7 +54,8 @@ export default {
     AuthForm,
     SearchBar,
     Home,
-    UploadMusic
+    UploadMusic,
+    ManageMusic
   },
   data() {
     return {
@@ -53,7 +64,9 @@ export default {
       isLoadingMusics: true,
       isBrowse: true,
       isUpload: true,
-      musics: []
+      isManageMusic: false,
+      musics: [],
+      myMusics: []
     }
   },
   methods: {
@@ -75,6 +88,13 @@ export default {
           })
         })
     },
+    fetchMyMusic() {
+      console.log('asd')
+      /*axios({
+        method: 'get',
+        url: 'urlfile'
+      })*/
+    },
     checkLogin(e) {
       console.log(e)
       this.isLogin = e
@@ -82,10 +102,18 @@ export default {
     browseBtn(e) {
       this.isBrowse = e
       this.isUpload = !e
+      this.isManageMusic = !e
+      this.fetchMusic()
     },
     uploadBtn(e) {
-      this.isBrowse = !e
       this.isUpload = e
+      this.isBrowse = !e
+      this.isManageMusic = !e
+    },
+    manageBtn(e) {
+      this.isManageMusic = e
+      this.isUpload = !e
+      this.isBrowse = !e
     },
     afterUpload(e) {
       this.browseBtn(e)

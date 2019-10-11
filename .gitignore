@@ -60,4 +60,11 @@ typings/
 # next.js build output
 .next
 .cache
+
+/dist
 dist
+dist/
+dist/*
+dist/main.*
+dist/index.html
+!docs/dist
