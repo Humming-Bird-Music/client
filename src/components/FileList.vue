@@ -18,7 +18,6 @@
             <span class="icon is-small">
               <i class="fas fa-share" aria-hidden="true"></i>
             </span>
-            <!-- <b-icon icon="menu-down"></b-icon> -->
           </span>
 
           <b-dropdown-item aria-role="listitem">
@@ -27,7 +26,14 @@
                 style="text-align: left"
                 class="level-item"
                 target="_blank"
-                :href="'https://twitter.com/intent/tweet?text=Just%20Share&url=' + music.url"
+                :href="
+                  'https://twitter.com/intent/tweet?text=' +
+                    music.title +
+                    ' - ' +
+                    music.artist +
+                    '&url=' +
+                    music.url
+                "
                 onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"
               >
                 <span style="text-align: left">
@@ -105,11 +111,11 @@ export default {
 </script>
 
 <style scoped>
-  .share-bottom{
-    margin: 5px; 
-    cursor:pointer;
-  }
-  .share-bottom:hover{
-    color: #7957D5;
-  }
+.share-bottom {
+  margin: 5px;
+  cursor: pointer;
+}
+.share-bottom:hover {
+  color: #7957d5;
+}
 </style>
