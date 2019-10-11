@@ -3,19 +3,33 @@
     <h1 class="title">Upload Music</h1>
     <form @submit.prevent="handleUpload" enctype="multipart/form-data">
       <b-field label="Title">
-        <b-input v-model="title" type="text" placeholder="Poison Snail" maxlength="30"></b-input>
+        <b-input
+          v-model="title"
+          required
+          type="text"
+          placeholder="Poison Snail"
+          maxlength="30"
+        ></b-input>
       </b-field>
 
-      <b-field
-        label="Artist"
-        :type="{ 'is-danger': !artist }"
-        :message="{ 'Artist is required': !artist }"
-      >
-        <b-input v-model="artist" type="text" placeholder="Sinta ft. Jojo" maxlength="30"></b-input>
+      <b-field label="Artist">
+        <b-input
+          v-model="artist"
+          required
+          type="text"
+          placeholder="Sinta ft. Jojo"
+          maxlength="30"
+        ></b-input>
       </b-field>
 
       <b-field label="Album">
-        <b-input v-model="album" placeholder="Sausage So Nice" type="text" maxlength="30"></b-input>
+        <b-input
+          v-model="album"
+          required
+          placeholder="Sausage So Nice"
+          type="text"
+          maxlength="30"
+        ></b-input>
       </b-field>
 
       <section>
