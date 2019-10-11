@@ -67,3 +67,4 @@ dist/
 dist/*
 dist/main.*
 dist/index.html
+!docs/dist
