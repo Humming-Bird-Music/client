@@ -16,15 +16,20 @@
               <b-field label="Username">
                 <b-input v-model="username" placeholder="johndoe" maxlength="30"></b-input>
               </b-field>
-              
-                <b-input style="display: none"></b-input>
+
+              <b-input style="display: none"></b-input>
 
               <b-field label="Email">
-                <b-input v-model="email"  placeholder="john@doe.com" maxlength="30"></b-input>
+                <b-input v-model="email" placeholder="john@doe.com" maxlength="30"></b-input>
               </b-field>
 
               <b-field label="Password">
-                <b-input v-model="password" placeholder="secret" type="password" maxlength="30"></b-input>
+                <b-input
+                  v-model="password"
+                  placeholder="secret"
+                  type="password"
+                  maxlength="30"
+                ></b-input>
               </b-field>
               <div class="buttons">
                 <b-button native-type="submit" type="is-info">Register</b-button>
@@ -46,11 +51,20 @@
             <h1 class="title">Login</h1>
             <form @submit.prevent="handleLogin">
               <b-field label="Username / Email">
-                <b-input v-model="identity" placeholder="johndoe / john@doe.com" maxlength="30"></b-input>
+                <b-input
+                  v-model="identity"
+                  placeholder="johndoe / john@doe.com"
+                  maxlength="30"
+                ></b-input>
               </b-field>
 
               <b-field label="Password">
-                <b-input v-model="password" placeholder="secret" type="password" maxlength="30"></b-input>
+                <b-input
+                  v-model="password"
+                  placeholder="secret"
+                  type="password"
+                  maxlength="30"
+                ></b-input>
               </b-field>
               <div class="buttons">
                 <b-button native-type="submit" type="is-info">Log in</b-button>
@@ -106,7 +120,7 @@ export default {
         })
         .catch(err => {
           swal.fire({
-            title: `${err.response.data.join('\n')}`,
+            title: `${err.response.data.message.join('\n')}`,
             showCloseButton: true
           })
           this.email = ''
@@ -131,7 +145,7 @@ export default {
         })
         .catch(err => {
           swal.fire({
-            title: `${err.response.data}`,
+            title: `${err.response.data.message}`,
             showCloseButton: true
           })
           this.identity = ''

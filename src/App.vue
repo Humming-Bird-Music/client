@@ -4,6 +4,7 @@
       <div class="columns">
         <div class="column is-one-fifth">
           <SideBar
+            :username="username"
             @manage="manageBtn"
             @browse="browseBtn"
             @upload="uploadBtn"
@@ -12,7 +13,7 @@
         </div>
         <div class="column" style="border: 0px solid red">
           <div v-if="isBrowse">
-            <SearchBar ></SearchBar>
+            <SearchBar @q="handleSearch"></SearchBar>
             <b-loading
               :is-full-page="isFullPage"
               :active.sync="isLoadingMusics"
@@ -63,10 +64,11 @@ export default {
       isFullPage: true,
       isLoadingMusics: true,
       isBrowse: true,
-      isUpload: true,
+      isUpload: false,
       isManageMusic: false,
       musics: [],
-      myMusics: []
+      myMusics: [],
+      username: localStorage.getItem('username')
     }
   },
   methods: {
@@ -127,6 +129,23 @@ export default {
     },
     afterUpload(e) {
       this.browseBtn(e)
+    },
+    handleSearch(e) {
+      console.log(e)
+      axios({
+        method: 'get',
+        url: `http://humming-bird.crowfx.online/musics?q=${e}`
+      })
+        .then(({ data: musics }) => {
+          console.log(musics)
+          this.musics = musics
+        })
+        .catch(err => {
+          swal.fire({
+            title: `${err.response.data.message}`,
+            showCloseButton: true
+          })
+        })
     }
   },
   mounted() {
