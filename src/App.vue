@@ -82,6 +82,7 @@ export default {
     browseBtn(e) {
       this.isBrowse = e
       this.isUpload = !e
+      this.fetchMusic()
     },
     uploadBtn(e) {
       this.isBrowse = !e
