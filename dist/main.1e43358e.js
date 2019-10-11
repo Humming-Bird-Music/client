@@ -10667,10 +10667,7 @@ exports.default = _default;
         { staticClass: "image is-96x96", staticStyle: { margin: "auto" } },
         [
           _c("img", {
-            attrs: {
-              src:
-                "http://www.eatlogos.com/art_logos/png/vector_eagle_art_logo.png"
-            }
+            attrs: { src: "/hummingbird-logo2.fdf91b67.png", alt: "logo" }
           })
         ]
       ),
@@ -10746,7 +10743,7 @@ render._withStripped = true
         
       }
     })();
-},{"_css_loader":"../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js","vue-hot-reload-api":"node_modules/vue-hot-reload-api/dist/index.js","vue":"node_modules/vue/dist/vue.runtime.esm.js"}],"node_modules/sweetalert2/dist/sweetalert2.all.js":[function(require,module,exports) {
+},{"./../assets/hummingbird-logo2.png":[["hummingbird-logo2.fdf91b67.png","src/assets/hummingbird-logo2.png"],"src/assets/hummingbird-logo2.png"],"_css_loader":"../../../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/css-loader.js","vue-hot-reload-api":"node_modules/vue-hot-reload-api/dist/index.js","vue":"node_modules/vue/dist/vue.runtime.esm.js"}],"node_modules/sweetalert2/dist/sweetalert2.all.js":[function(require,module,exports) {
 var define;
 var global = arguments[3];
 /*!
@@ -16544,54 +16541,55 @@ var _default = {
     handleUpload: function handleUpload() {
       var _this = this;
 
-      /* swal.fire({
-        onOpen() {
-          swal.showLoading()
+      _sweetalert.default.fire({
+        onOpen: function onOpen() {
+          _sweetalert.default.showLoading();
         }
-      }) */
-      this.$buefy.snackbar.open({
+      });
+      /*this.$buefy.snackbar.open({
         // message: 'Yellow button and positioned on top, click to close',
-        message: "\n          <b-button native-type=\"submit\" type=\"is-info\">Upload</b-button>\n        ",
+        message: `Uploading ${this.title}...`,
         type: 'is-info',
         position: 'is-top-right',
         actionText: 'Retry',
         indefinite: true,
-        onAction: function onAction() {
-          _this.$buefy.toast.open({
+        onAction: () => {
+          this.$buefy.toast.open({
             message: 'Action pressed',
             queue: false
-          });
+          })
         }
-      });
+      })*/
+
+
       var formData = new FormData();
       formData.append('music', this.music);
       formData.set('title', this.title);
       formData.set('artist', this.artist);
       formData.set('album', this.album);
-      /*axios({
+      (0, _axios.default)({
         method: 'post',
-        url: 'http://localhost:3000/musics',
+        url: 'http://humming-bird.crowfx.online/musics',
         data: formData,
         headers: {
           authorization: localStorage.getItem('token'),
           'Content-Type': 'multipart/form-data'
         }
-      })
-        .then(({ data }) => {
-          console.log(data)
-          swal.fire({
-            title: 'Uploaded Successfully',
-            timer: 1200
-          })
-          this.$emit('uploaded', true)
-        })
-        .catch(err => {
-          console.log(err.response)
-          swal.fire({
-            title: `${err.response.data.message}`,
-            showCloseButton: true
-          })
-        })*/
+      }).then(function (_ref) {
+        var data = _ref.data;
+
+        _sweetalert.default.fire({
+          title: 'Uploaded Successfully',
+          timer: 1200
+        });
+
+        _this.$emit('uploaded', true);
+      }).catch(function (err) {
+        _sweetalert.default.fire({
+          title: "".concat(err.response.data.message),
+          showCloseButton: true
+        });
+      });
     }
   }
 };

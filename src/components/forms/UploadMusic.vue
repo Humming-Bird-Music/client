@@ -62,16 +62,14 @@ export default {
       this.music = []
     },
     handleUpload() {
-      /* swal.fire({
+      swal.fire({
         onOpen() {
           swal.showLoading()
         }
-      }) */
-      this.$buefy.snackbar.open({
+      })
+      /*this.$buefy.snackbar.open({
         // message: 'Yellow button and positioned on top, click to close',
-        message: `
-          <b-button native-type="submit" type="is-info">Upload</b-button>
-        `,
+        message: `Uploading ${this.title}...`,
         type: 'is-info',
         position: 'is-top-right',
         actionText: 'Retry',
@@ -82,15 +80,15 @@ export default {
             queue: false
           })
         }
-      })
+      })*/
       const formData = new FormData()
       formData.append('music', this.music)
       formData.set('title', this.title)
       formData.set('artist', this.artist)
       formData.set('album', this.album)
-      /*axios({
+      axios({
         method: 'post',
-        url: 'http://localhost:3000/musics',
+        url: 'http://humming-bird.crowfx.online/musics',
         data: formData,
         headers: {
           authorization: localStorage.getItem('token'),
@@ -98,7 +96,6 @@ export default {
         }
       })
         .then(({ data }) => {
-          console.log(data)
           swal.fire({
             title: 'Uploaded Successfully',
             timer: 1200
@@ -106,12 +103,11 @@ export default {
           this.$emit('uploaded', true)
         })
         .catch(err => {
-          console.log(err.response)
           swal.fire({
             title: `${err.response.data.message}`,
             showCloseButton: true
           })
-        })*/
+        })
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <b-menu>
     <figure class="image is-96x96" style="margin: auto">
-      <img src="http://www.eatlogos.com/art_logos/png/vector_eagle_art_logo.png" />
+      <img src="../assets/hummingbird-logo2.png" alt="logo" />
     </figure>
     <b-menu-list label="Menu">
       <b-menu-item icon="magnify" @click="browse" label="Browse"></b-menu-item>
