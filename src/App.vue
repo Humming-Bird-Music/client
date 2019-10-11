@@ -30,6 +30,7 @@
 
 <script>
 import axios from 'axios'
+import swal from 'sweetalert2'
 
 import SideBar from './components/SideBar.vue'
 import AuthForm from './components/forms/AuthForm.vue'
@@ -53,7 +54,8 @@ export default {
       isLoadingMusics: true,
       isBrowse: true,
       isUpload: true,
-      musics: []
+      musics: [],
+      musicsUser: []
     }
   },
   methods: {
@@ -70,7 +72,27 @@ export default {
         })
         .catch(err => {
           swal.fire({
-            title: `${err.response.data}`,
+            title: `${err.response.data.message}`,
+            showCloseButton: true
+          })
+        })
+    },
+    fetchByUser(){
+      axios({
+        method: 'get',
+        // url: 'http://localhost:3000/musics'
+        url: `http://humming-bird.crowfx.online/musics/user`,
+        headers: {
+          authorization: localStorage.getItem('token')
+        }
+      })
+        .then(({ data: musics }) => {
+          console.log(musics)
+          this.musicsUser = musics
+        })
+        .catch(err => {
+          swal.fire({
+            title: `${err.response.data.message}`,
             showCloseButton: true
           })
         })
@@ -94,6 +116,7 @@ export default {
   },
   mounted() {
     this.fetchMusic()
+    this.fetchByUser()
     if (localStorage.getItem('token')) {
       this.isLogin = true
       this.isUpload = false
