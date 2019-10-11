@@ -9,7 +9,7 @@
       <b-field
         label="Artist"
         :type="{ 'is-danger': !artist }"
-        :message="{ 'Artist in required': !artist }"
+        :message="{ 'Artist is required': !artist }"
       >
         <b-input v-model="artist" type="text" placeholder="Sinta ft. Jojo" maxlength="30"></b-input>
       </b-field>
