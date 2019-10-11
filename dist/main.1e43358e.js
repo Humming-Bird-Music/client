@@ -16270,7 +16270,1261 @@ var define;
         r = [];
   }]).default;
 });
-},{"vue":"node_modules/vue/dist/vue.runtime.esm.js"}],"src/components/FileList.vue":[function(require,module,exports) {
+},{"vue":"node_modules/vue/dist/vue.runtime.esm.js"}],"node_modules/id3-parser/lib/constants/genres.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = ['Blues', 'Classic Rock', 'Country', 'Dance', 'Disco', 'Funk', 'Grunge', 'Hip-Hop', 'Jazz', 'Metal', 'New Age', 'Oldies', 'Other', 'Pop', 'R&B', 'Rap', 'Reggae', 'Rock', 'Techno', 'Industrial', 'Alternative', 'Ska', 'Death Metal', 'Pranks', 'Soundtrack', 'Euro-Techno', 'Ambient', 'Trip-Hop', 'Vocal', 'Jazz+Funk', 'Fusion', 'Trance', 'Classical', 'Instrumental', 'Acid', 'House', 'Game', 'Sound Clip', 'Gospel', 'Noise', 'AlternRock', 'Bass', 'Soul', 'Punk', 'Space', 'Meditative', 'Instrumental Pop', 'Instrumental Rock', 'Ethnic', 'Gothic', 'Darkwave', 'Techno-Industrial', 'Electronic', 'Pop-Folk', 'Eurodance', 'Dream', 'Southern Rock', 'Comedy', 'Cult', 'Gangsta Rap', 'Top 40', 'Christian Rap', 'Pop / Funk', 'Jungle', 'Native American', 'Cabaret', 'New Wave', 'Psychedelic', 'Rave', 'Showtunes', 'Trailer', 'Lo-Fi', 'Tribal', 'Acid Punk', 'Acid Jazz', 'Polka', 'Retro', 'Musical', 'Rock & Roll', 'Hard Rock', 'Folk', 'Folk-Rock', 'National Folk', 'Swing', 'Fast  Fusion', 'Bebob', 'Latin', 'Revival', 'Celtic', 'Bluegrass', 'Avantgarde', 'Gothic Rock', 'Progressive Rock', 'Psychedelic Rock', 'Symphonic Rock', 'Slow Rock', 'Big Band', 'Chorus', 'Easy Listening', 'Acoustic', 'Humour', 'Speech', 'Chanson', 'Opera', 'Chamber Music', 'Sonata', 'Symphony', 'Booty Bass', 'Primus', 'Porn Groove', 'Satire', 'Slow Jam', 'Club', 'Tango', 'Samba', 'Folklore', 'Ballad', 'Power Ballad', 'Rhythmic Soul', 'Freestyle', 'Duet', 'Punk Rock', 'Drum Solo', 'A Cappella', 'Euro-House', 'Dance Hall', 'Goa', 'Drum & Bass', 'Club-House', 'Hardcore', 'Terror', 'Indie', 'BritPop', 'Negerpunk', 'Polsk Punk', 'Beat', 'Christian Gangsta Rap', 'Heavy Metal', 'Black Metal', 'Crossover', 'Contemporary Christian', 'Christian Rock', 'Merengue', 'Salsa', 'Thrash Metal', 'Anime', 'JPop', 'Synthpop', 'Rock/Pop'];
+},{}],"node_modules/id3-parser/lib/utils.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var toStr = String.fromCharCode;
+/**
+ * Convert utf8 bytes to string.
+ * @description
+ * According to utf8 spec, char is encoded to [1,4] byte.
+ * 1. 1 byte, 0 - 0x7f, the same as Ascii chars.
+ * 2. 2 bytes, 110xxxxx 10xxxxxx.
+ * 3. 3 bytes, 1110xxxx 10xxxxxx 10xxxxxx.
+ * 4. 4 bytes, 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx.
+ * For 2-4 bytes, remove leading 10/110/1110/11110 and get final codepoint.
+ * @param bytes Utf8 binary bytes, usually array of numbers.
+ * @param maxToRead Max number of bytes to read.
+ */
+
+function readBytesToUTF8(bytes, maxToRead) {
+  if (maxToRead == null || maxToRead < 0) {
+    maxToRead = bytes.length;
+  } else {
+    maxToRead = Math.min(maxToRead, bytes.length);
+  }
+
+  var index = 0; // Process BOM(Byte order mark).
+
+  if (bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+    index = 3;
+  }
+
+  var arr = []; // Continue to insert string to arr until processed bytes' length reach max.
+
+  for (var i = 0; index < maxToRead; i++) {
+    var byte1 = bytes[index++];
+    var byte2 = void 0;
+    var byte3 = void 0;
+    var byte4 = void 0;
+    var codepoint = void 0; // End flag.
+
+    if (byte1 === 0x00) {
+      break;
+    } else if (byte1 < 0x80) {
+      arr[i] = toStr(byte1);
+    } else if (byte1 >= 0xC2 && byte1 < 0xE0) {
+      byte2 = bytes[index++];
+      arr[i] = toStr(((byte1 & 0x1F) << 6) + (byte2 & 0x3F));
+    } else if (byte1 >= 0xE0 && byte1 < 0xF0) {
+      byte2 = bytes[index++];
+      byte3 = bytes[index++];
+      arr[i] = toStr(((byte1 & 0x0F) << 12) + ((byte2 & 0x3F) << 6) + (byte3 & 0x3F));
+    } else if (byte1 >= 0xF0 && byte1 < 0xF5) {
+      byte2 = bytes[index++];
+      byte3 = bytes[index++];
+      byte4 = bytes[index++]; // See <https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae>
+
+      codepoint = ((byte1 & 0x07) << 18) + ((byte2 & 0x3F) << 12) + ((byte3 & 0x3F) << 6) + (byte4 & 0x3F) - 0x10000; // Invoke String.fromCharCode(H, L) to get correct char.
+
+      arr[i] = toStr((codepoint >> 10) + 0xD800, (codepoint & 0x3FF) + 0xDC00);
+    }
+  }
+
+  return arr.join('');
+}
+
+exports.readBytesToUTF8 = readBytesToUTF8;
+/**
+ * Convert utf16 bytes to string.
+ * @description
+ * Utf16 represents char with one or two 16-bit code units per code point.
+ * 1. Range 0 - 0xFFFF (i.e. the BMP), can be represented with one 16-bit.
+ * 2. Range 0x10000 - 0x10FFFF (i.e. outside the BMP), can only be encoded using two 16-bit code units.
+ *
+ * The two 16-bit is called a surrogate pair.
+ * - The first code unit of a surrogate pair is always in the range from 0xD800 to 0xDBFF,
+ *   and is called a high surrogate or a lead surrogate.
+ * - The second code unit of a surrogate pair is always in the range from 0xDC00 to 0xDFFF,
+ *   and is called a low surrogate or a trail surrogate.
+ *
+ * A codepoint `C` greater than 0xFFFF corresponds to a surrogate pair <H, L>:
+ * H = Math.floor((C - 0x10000) / 0x400) + 0xD800
+ * L = (C - 0x10000) % 0x400 + 0xDC00
+ * C = (H - 0xD800) * 0x400 + L - 0xDC00 + 0x10000
+ * @param bytes Utf16 binary bytes, usually array of numbers.
+ * @param isBigEndian Specify whether utf16 bytes big-endian or little-endian.
+ * @param maxToRead Max number of bytes to read.
+ */
+
+function readBytesToUTF16(bytes, isBigEndian, maxToRead) {
+  if (maxToRead == null || maxToRead < 0) {
+    maxToRead = bytes.length;
+  } else {
+    maxToRead = Math.min(maxToRead, bytes.length);
+  }
+
+  var index = 0;
+  var offset1 = 1;
+  var offset2 = 0; // Check BOM and set isBigEndian.
+
+  if (bytes[0] === 0xFE && bytes[1] === 0xFF) {
+    isBigEndian = true;
+    index = 2;
+  } else if (bytes[0] === 0xFF && bytes[1] === 0xFE) {
+    isBigEndian = false;
+    index = 2;
+  }
+
+  if (isBigEndian) {
+    offset1 = 0;
+    offset2 = 1;
+  }
+
+  var arr = [];
+  var byte1;
+  var byte2;
+  var word1;
+  var word2;
+  var byte3;
+  var byte4;
+
+  for (var i = 0; index < maxToRead; i++) {
+    // Set high/low 8 bit corresponding to LE/BE.
+    byte1 = bytes[index + offset1];
+    byte2 = bytes[index + offset2]; // Get first 16 bits' value.
+
+    word1 = (byte1 << 8) + byte2;
+    index += 2; // If 16 bits are all 0, means end.
+
+    if (word1 === 0x0000) {
+      break;
+    } else if (byte1 < 0xD8 || byte1 >= 0xE0) {
+      arr[i] = toStr(word1);
+    } else {
+      // Get next 16 bits.
+      byte3 = bytes[index + offset1];
+      byte4 = bytes[index + offset2];
+      word2 = (byte3 << 8) + byte4;
+      index += 2; // Then invoke String.fromCharCode(H, L) to get correct char.
+
+      arr[i] = toStr(word1, word2);
+    }
+  }
+
+  return arr.join('');
+}
+
+exports.readBytesToUTF16 = readBytesToUTF16;
+
+function readBytesToISO8859(bytes, maxToRead) {
+  if (maxToRead == null || maxToRead < 0) {
+    maxToRead = bytes.length;
+  } else {
+    maxToRead = Math.min(maxToRead, bytes.length);
+  }
+
+  var arr = [];
+
+  for (var i = 0; i < maxToRead; i++) {
+    arr.push(toStr(bytes[i]));
+  }
+
+  return arr.join('');
+}
+
+exports.readBytesToISO8859 = readBytesToISO8859;
+/**
+ * Convert bytes to string according to encoding.
+ * @param bytes Binary bytes.
+ * @param encoding id3v2 tag encoding, always 0/1/2/3.
+ * @param maxToRead Max number of bytes to read.
+ */
+
+function readBytesToString(bytes, encoding, maxToRead) {
+  if (encoding === 0) {
+    return readBytesToISO8859(bytes, maxToRead);
+  } else if (encoding === 3) {
+    return readBytesToUTF8(bytes, maxToRead);
+  } else if (encoding === 1 || encoding === 2) {
+    return readBytesToUTF16(bytes, undefined, maxToRead);
+  } else {
+    return null;
+  }
+}
+
+exports.readBytesToString = readBytesToString;
+
+function getEndpointOfBytes(bytes, encoding, start) {
+  if (start === void 0) {
+    start = 0;
+  } // ISO-8859 use $00 as end flag, and
+  // unicode use $00 00 as end flag.
+
+
+  var checker = encoding === 0 ? function (index) {
+    return bytes[index] === 0;
+  } : function (index) {
+    return bytes[index] === 0 && bytes[index + 1] === 0;
+  };
+  var i = start;
+
+  for (; i < bytes.length; i++) {
+    if (checker(i)) {
+      break;
+    }
+  }
+
+  return i;
+}
+
+exports.getEndpointOfBytes = getEndpointOfBytes;
+
+function skipPaddingZeros(bytes, start) {
+  for (var i = start;; i++) {
+    if (bytes[i] === 0) {
+      start++;
+    } else {
+      break;
+    }
+  }
+
+  return start;
+}
+
+exports.skipPaddingZeros = skipPaddingZeros;
+},{}],"node_modules/id3-parser/lib/parsers/v1parser.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var genres_1 = require("../constants/genres");
+
+var utils_1 = require("../utils");
+
+var V1_MIN_LENGTH = 128;
+/**
+ * Parse ID3v1 metadata from binary bytes.
+ * @description
+ * ID3v1 tag occupies 128 bytes, beginning with the string TAG 128 bytes
+ * from the end of the file.
+ *
+ * And the format is like: header(3) + title(30) + artist(30) +
+ * album(30) + year(4) + comment(30) + genre(1).
+ *
+ * And extended tag is only supported by few programs, so we ignore it.
+ * @param bytes binary bytes.
+ */
+
+function parseV1Data(bytes) {
+  if (!bytes || bytes.length < V1_MIN_LENGTH) {
+    return false;
+  }
+
+  bytes = bytes.slice(bytes.length - V1_MIN_LENGTH);
+  var tags = {
+    version: {
+      major: 1,
+      minor: 0
+    }
+  };
+  var flag = utils_1.readBytesToUTF8(bytes, 3);
+
+  if (flag !== 'TAG') {
+    return false;
+  } // Strings are either space- or zero-padded. So remove them.
+
+
+  var reWhiteSpace = /(^[\s0]+|[\s0]+$)/;
+  tags.title = utils_1.readBytesToUTF8(bytes.slice(3), 30).replace(reWhiteSpace, '');
+  tags.artist = utils_1.readBytesToUTF8(bytes.slice(33), 30).replace(reWhiteSpace, '');
+  tags.album = utils_1.readBytesToUTF8(bytes.slice(63), 30).replace(reWhiteSpace, '');
+  tags.year = utils_1.readBytesToUTF8(bytes.slice(93), 4).replace(reWhiteSpace, ''); // If there is a zero byte at [125], the comment is 28 bytes and the remaining 2 are [0, trackno]
+
+  if (bytes[125] === 0) {
+    tags.comments = utils_1.readBytesToUTF8(bytes.slice(97), 28).replace(reWhiteSpace, '');
+    tags.version.minor = 1;
+    tags.track = bytes[126];
+  } else {
+    tags.comments = utils_1.readBytesToUTF8(bytes.slice(97), 30).replace(reWhiteSpace, '');
+  }
+
+  tags.genre = genres_1.default[bytes[127]] || '';
+  return tags;
+}
+
+exports.default = parseV1Data;
+},{"../constants/genres":"node_modules/id3-parser/lib/constants/genres.js","../utils":"node_modules/id3-parser/lib/utils.js"}],"node_modules/id3-parser/lib/constants/frameTypes.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var FRAME_TYPES = {
+  /*
+   * Textual frames
+   */
+  TALB: 'album',
+  TBPM: 'bpm',
+  TCOM: 'composer',
+  TCON: 'genre',
+  TCOP: 'copyright',
+  TDEN: 'encoding-time',
+  TDLY: 'playlist-delay',
+  TDOR: 'original-release-time',
+  TDRC: 'recording-time',
+  TDRL: 'release-time',
+  TDTG: 'tagging-time',
+  TENC: 'encoder',
+  TEXT: 'writer',
+  TFLT: 'file-type',
+  TIPL: 'involved-people',
+  TIT1: 'content-group',
+  TIT2: 'title',
+  TIT3: 'subtitle',
+  TKEY: 'initial-key',
+  TLAN: 'language',
+  TLEN: 'length',
+  TMCL: 'credits',
+  TMED: 'media-type',
+  TMOO: 'mood',
+  TOAL: 'original-album',
+  TOFN: 'original-filename',
+  TOLY: 'original-writer',
+  TOPE: 'original-artist',
+  TOWN: 'owner',
+  TPE1: 'artist',
+  TPE2: 'band',
+  TPE3: 'conductor',
+  TPE4: 'remixer',
+  TPOS: 'set-part',
+  TPRO: 'produced-notice',
+  TPUB: 'publisher',
+  TRCK: 'track',
+  TRSN: 'radio-name',
+  TRSO: 'radio-owner',
+  TSOA: 'album-sort',
+  TSOP: 'performer-sort',
+  TSOT: 'title-sort',
+  TSRC: 'isrc',
+  TSSE: 'encoder-settings',
+  TSST: 'set-subtitle',
+  TXXX: 'user-defined-text-information',
+  TYER: 'year',
+
+  /*
+   * URL frames
+   */
+  WCOM: 'url-commercial',
+  WCOP: 'url-legal',
+  WOAF: 'url-file',
+  WOAR: 'url-artist',
+  WOAS: 'url-source',
+  WORS: 'url-radio',
+  WPAY: 'url-payment',
+  WPUB: 'url-publisher',
+
+  /*
+   * URL frames (<=2.2)
+   */
+  WAF: 'url-file',
+  WAR: 'url-artist',
+  WAS: 'url-source',
+  WCM: 'url-commercial',
+  WCP: 'url-copyright',
+  WPB: 'url-publisher',
+
+  /*
+   * Comment frame
+   */
+  COMM: 'comments',
+  USLT: 'lyrics',
+
+  /*
+   * Image frame
+   */
+  APIC: 'image',
+  PIC: 'image',
+
+  /**
+   * User/owner/involved people frame
+   */
+  IPLS: 'involved-people-list',
+  OWNE: 'ownership'
+};
+exports.default = FRAME_TYPES; // Frame type to value map.
+
+exports.FrameTypeValueMap = {
+  TXXX: 'array',
+  COMM: 'array',
+  USLT: 'array'
+};
+},{}],"node_modules/id3-parser/lib/constants/imageTypes.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = ['other', 'file-icon', 'icon', 'cover-front', 'cover-back', 'leaflet', 'media', 'artist-lead', 'artist', 'conductor', 'band', 'composer', 'lyricist-writer', 'recording-location', 'during-recording', 'during-performance', 'screen', 'fish', 'illustration', 'logo-band', 'logo-publisher'];
+},{}],"node_modules/id3-parser/lib/parsers/v2parser.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var frameTypes_1 = require("../constants/frameTypes");
+
+var genres_1 = require("../constants/genres");
+
+var imageTypes_1 = require("../constants/imageTypes");
+
+var utils_1 = require("../utils");
+
+var V2_MIN_LENGTH = 20; // TAG HEADER(10) + ONE FRAME HEADER(10)
+
+function parseV2Data(bytes) {
+  if (!bytes || bytes.length < V2_MIN_LENGTH) {
+    return false;
+  }
+
+  var tags = parseV2Header(bytes.slice(0, 10));
+
+  if (!tags) {
+    return false;
+  }
+
+  var flags = tags.version.flags; // Currently do not support unsynchronisation
+
+  if (flags.unsync) {
+    throw new Error('no support for unsynchronisation');
+  }
+
+  var headerSize = 10; // Increment the header size if an extended header exists.
+
+  if (flags.xheader) {
+    // Usually extended header size is 6 or 10 bytes
+    headerSize += calcTagSize(bytes.slice(10, 14));
+  }
+
+  var tagSize = calcTagSize(bytes.slice(6, 10));
+  parseV2Frames(bytes.slice(headerSize, tagSize + headerSize), tags);
+  return tags;
+}
+
+exports.default = parseV2Data;
+/**
+ * Parse ID3v2 tag header.
+ * @description
+ * A typical ID3v2 tag (header) is like:
+ * $49 44 33 yy yy xx zz zz zz zz
+ *
+ * Where yy is less than $FF, xx is the 'flags' byte and zz is less than $80.
+ * @param bytes binary bytes.
+ */
+
+function parseV2Header(bytes) {
+  if (!bytes || bytes.length < 10) {
+    return false;
+  }
+
+  var identity = utils_1.readBytesToUTF8(bytes, 3);
+
+  if (identity !== 'ID3') {
+    return false;
+  }
+
+  var flagByte = bytes[5];
+  var version = {
+    major: 2,
+    minor: bytes[3],
+    revision: bytes[4],
+    flags: {
+      unsync: (flagByte & 0x80) !== 0,
+      xheader: (flagByte & 0x40) !== 0,
+      experimental: (flagByte & 0x20) !== 0
+    }
+  };
+  return {
+    version: version
+  };
+}
+/**
+ * Calculate the total tag size, but excluding the header size(10 bytes).
+ * @param bytes binary bytes.
+ */
+
+
+function calcTagSize(bytes) {
+  return (bytes[0] & 0x7f) * 0x200000 + (bytes[1] & 0x7f) * 0x4000 + (bytes[2] & 0x7f) * 0x80 + (bytes[3] & 0x7f);
+}
+
+exports.calcTagSize = calcTagSize;
+/**
+ * Calculate frame size (just content size, exclude 10 bytes header size).
+ * @param bytes binary bytes.
+ */
+
+function calcFrameSize(bytes) {
+  return bytes.length < 4 ? 0 : bytes[0] * 0x1000000 + bytes[1] * 0x10000 + bytes[2] * 0x100 + bytes[3];
+}
+
+exports.calcFrameSize = calcFrameSize;
+
+function parseV2Frames(bytes, tags) {
+  var position = 0;
+  var version = tags.version;
+
+  while (position < bytes.length) {
+    var size = calcFrameSize(bytes.slice(position + 4)); // the left data would be '\u0000\u0000...', just a padding
+
+    if (size === 0) {
+      break;
+    } // * < v2.3, frame ID is 3 chars, size is 3 bytes making a total size of 6 bytes
+    // * >= v2.3, frame ID is 4 chars, size is 4 bytes, flags are 2 bytes, total 10 bytes
+
+
+    var slice = bytes.slice(position, position + 10 + size);
+
+    if (!slice.length) {
+      break;
+    }
+
+    var frame = parseFrame(slice, version.minor, size);
+
+    if (frame.tag) {
+      if (frameTypes_1.FrameTypeValueMap[frame.id] === 'array') {
+        if (tags[frame.tag]) {
+          tags[frame.tag].push(frame.value);
+        } else {
+          tags[frame.tag] = [frame.value];
+        }
+      } else {
+        tags[frame.tag] = frame.value;
+      }
+    }
+
+    position += slice.length;
+  }
+}
+/**
+ * Parse id3 frame.
+ * @description
+ * Declared ID3v2 frames are of different types:
+ * 1. Unique file identifier
+ * 2. Text information frames
+ * 3. ...
+ *
+ * For frames that allow different types of text encoding, the first byte after header (bytes[10])
+ * represents encoding. Its value is of:
+ * 1. 00 <---> ISO-8859-1 (ASCII), default encoding, represented as <text string>/<full text string>
+ * 2. 01 <---> UCS-2 encoded Unicode with BOM.
+ * 3. 02 <---> UTF-16BE encoded Unicode without BOM.
+ * 4. 03 <---> UTF-8 encoded Unicode.
+ *
+ * And 2-4 represented as <text string according to encoding>/<full text string according to encoding>
+ * @param bytes Binary bytes.
+ * @param minor Minor version, 2/3/4
+ * @param size Frame size.
+ */
+
+
+function parseFrame(bytes, minor, size) {
+  var result = {
+    id: null,
+    tag: null,
+    value: null
+  };
+  var header = {
+    id: utils_1.readBytesToUTF8(bytes, 4),
+    type: null,
+    size: size,
+    flags: [bytes[8], bytes[9]]
+  };
+  header.type = header.id[0];
+  result.id = header.id;
+
+  if (minor === 4) {} // TODO: parse v2.4 frame
+  // No support for compressed, unsychronised, etc frames
+
+
+  if (header.flags[1] !== 0) {
+    return result;
+  }
+
+  if (!(header.id in frameTypes_1.default)) {
+    return result;
+  }
+
+  result.tag = frameTypes_1.default[header.id];
+  var encoding = 0;
+  var variableStart = 0;
+  var variableLength = 0;
+  var i = 0;
+  /**
+   * Text information frames, structure is:
+   * <Header for 'Text information frame', ID: "T000" - "TZZZ", excluding "TXXX">
+   * Text encoding    $xx
+   * Information    <text string according to encoding>
+   */
+
+  if (header.type === 'T') {
+    encoding = bytes[10]; // If is User defined text information frame (TXXX), then we should handle specially.
+    // <Header for 'User defined text information frame', ID: "TXXX" >
+    // Text encoding    $xx
+    // Description < text string according to encoding > $00(00)
+    // Value < text string according to encoding >
+
+    if (header.id === 'TXXX') {
+      variableStart = 11;
+      variableLength = utils_1.getEndpointOfBytes(bytes, encoding, variableStart) - variableStart;
+      var value = {
+        description: utils_1.readBytesToString(bytes.slice(variableStart), encoding, variableLength),
+        value: ''
+      };
+      variableStart += variableLength + 1;
+      variableStart = utils_1.skipPaddingZeros(bytes, variableStart);
+      value.value = utils_1.readBytesToString(bytes.slice(variableStart), encoding);
+      result.value = value;
+    } else {
+      result.value = utils_1.readBytesToString(bytes.slice(11), encoding); // Specially handle the 'Content type'.
+
+      if (header.id === 'TCON' && result.value !== null) {
+        if (result.value[0] === '(') {
+          var handledTCON = result.value.match(/\(\d+\)/g);
+
+          if (handledTCON) {
+            result.value = handledTCON.map(function (v) {
+              return genres_1.default[+v.slice(1, -1)];
+            }).join(',');
+          }
+        } else {
+          var genre = parseInt(result.value, 10);
+
+          if (!isNaN(genre)) {
+            result.value = genres_1.default[genre];
+          }
+        }
+      }
+    }
+  } else if (header.type === 'W') {
+    // User defined URL link frame
+    if (header.id === 'WXXX' && bytes[10] === 0) {
+      result.value = utils_1.readBytesToISO8859(bytes.slice(11));
+    } else {
+      result.value = utils_1.readBytesToISO8859(bytes.slice(10));
+    }
+  } else if (header.id === 'COMM' || header.id === 'USLT') {
+    encoding = bytes[10];
+    variableStart = 14;
+    variableLength = 0;
+    var language = utils_1.readBytesToISO8859(bytes.slice(11), 3);
+    variableLength = utils_1.getEndpointOfBytes(bytes, encoding, variableStart) - variableStart;
+    var description = utils_1.readBytesToString(bytes.slice(variableStart), encoding, variableLength);
+    variableStart = utils_1.skipPaddingZeros(bytes, variableStart + variableLength + 1);
+    result.value = {
+      language: language,
+      description: description,
+      value: utils_1.readBytesToString(bytes.slice(variableStart), encoding)
+    };
+  } else if (header.id === 'APIC') {
+    encoding = bytes[10];
+    var image = {
+      type: null,
+      mime: null,
+      description: null,
+      data: null
+    };
+    variableStart = 11; // MIME is always encoded as ISO-8859, So always pass 0 to encoding argument.
+
+    variableLength = utils_1.getEndpointOfBytes(bytes, 0, variableStart) - variableStart;
+    image.mime = utils_1.readBytesToString(bytes.slice(variableStart), 0, variableLength);
+    image.type = imageTypes_1.default[bytes[variableStart + variableLength + 1]] || 'other'; // Skip $00 and $xx(Picture type).
+
+    variableStart += variableLength + 2;
+    variableLength = 0;
+
+    for (i = variableStart;; i++) {
+      if (bytes[i] === 0) {
+        variableLength = i - variableStart;
+        break;
+      }
+    }
+
+    image.description = variableLength === 0 ? null : utils_1.readBytesToString(bytes.slice(variableStart), encoding, variableLength); // check $00 at start of the image binary data
+
+    variableStart = utils_1.skipPaddingZeros(bytes, variableStart + variableLength + 1);
+    image.data = bytes.slice(variableStart);
+    result.value = image;
+  } else if (header.id === 'IPLS') {
+    encoding = bytes[10];
+    result.value = utils_1.readBytesToString(bytes.slice(11), encoding);
+  } else if (header.id === 'OWNE') {
+    encoding = bytes[10];
+    variableStart = 11;
+    variableLength = utils_1.getEndpointOfBytes(bytes, encoding, variableStart);
+    var pricePayed = utils_1.readBytesToISO8859(bytes.slice(variableStart), variableLength);
+    variableStart += variableLength + 1;
+    var dateOfPurch = utils_1.readBytesToISO8859(bytes.slice(variableStart), 8);
+    variableStart += 8;
+    result.value = {
+      pricePayed: pricePayed,
+      dateOfPurch: dateOfPurch,
+      seller: utils_1.readBytesToString(bytes.slice(variableStart), encoding)
+    };
+  } else {// Do nothing to other frames.
+  }
+
+  return result;
+}
+},{"../constants/frameTypes":"node_modules/id3-parser/lib/constants/frameTypes.js","../constants/genres":"node_modules/id3-parser/lib/constants/genres.js","../constants/imageTypes":"node_modules/id3-parser/lib/constants/imageTypes.js","../utils":"node_modules/id3-parser/lib/utils.js"}],"node_modules/id3-parser/lib/polyfill.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function polyfill() {
+  // https://tc39.github.io/ecma262/#sec-%typedarray%.prototype.slice
+  if (typeof Uint8Array === 'function' && !Uint8Array.prototype.slice) {
+    Object.defineProperty(Uint8Array.prototype, 'slice', {
+      value: Array.prototype.slice
+    });
+  }
+}
+
+exports.default = polyfill;
+},{}],"node_modules/id3-parser/lib/index.js":[function(require,module,exports) {
+"use strict";
+
+var __assign = this && this.__assign || Object.assign || function (t) {
+  for (var s, i = 1, n = arguments.length; i < n; i++) {
+    s = arguments[i];
+
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+  }
+
+  return t;
+};
+
+var __rest = this && this.__rest || function (s, e) {
+  var t = {};
+
+  for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+
+  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0) t[p[i]] = s[p[i]];
+  return t;
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var v1parser_1 = require("./parsers/v1parser");
+
+exports.parseV1Tag = v1parser_1.default;
+
+var v2parser_1 = require("./parsers/v2parser");
+
+exports.parseV2Tag = v2parser_1.default;
+
+var polyfill_1 = require("./polyfill");
+
+polyfill_1.default(); // do polyfill.
+
+function parse(bytes) {
+  var v1data = v1parser_1.default(bytes);
+  var v2data = v2parser_1.default(bytes);
+
+  if (!v2data && !v1data) {
+    return false;
+  }
+
+  var defaultValue = {
+    version: false
+  };
+
+  var _a = v2data || defaultValue,
+      v2 = _a.version,
+      v2meta = __rest(_a, ["version"]);
+
+  var _b = v1data || defaultValue,
+      v1 = _b.version,
+      v1meta = __rest(_b, ["version"]);
+
+  var result = __assign({
+    version: {
+      v1: v1,
+      v2: v2
+    }
+  }, v1meta, v2meta);
+  /* tslint:disable:no-any */
+
+
+  if (v1meta.comments) {
+    result.comments = [{
+      value: v1meta.comments
+    }].concat(v2meta && v2meta.comments ? v2meta.comments : []);
+  }
+  /* tslint:enable:no-any */
+
+
+  return result;
+}
+
+exports.parse = parse;
+},{"./parsers/v1parser":"node_modules/id3-parser/lib/parsers/v1parser.js","./parsers/v2parser":"node_modules/id3-parser/lib/parsers/v2parser.js","./polyfill":"node_modules/id3-parser/lib/polyfill.js"}],"node_modules/id3-parser/lib/universal/helpers.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function convertFileToBuffer(file) {
+  var reader = new FileReader();
+  var fulfill;
+  var refuse;
+  var promise = new Promise(function (resolve, reject) {
+    fulfill = resolve;
+    refuse = reject;
+  });
+
+  reader.onload = function () {
+    return fulfill(new Uint8Array(reader.result));
+  };
+
+  reader.onerror = function (e) {
+    return refuse(e);
+  };
+
+  reader.readAsArrayBuffer(file);
+  return promise;
+}
+
+exports.convertFileToBuffer = convertFileToBuffer;
+
+function fetchFileAsBuffer(url) {
+  if (!url) {
+    throw new Error('Argument should be valid url string.');
+  }
+
+  var fulfill;
+  var refuse;
+  var promise = new Promise(function (resolve, reject) {
+    fulfill = resolve;
+    refuse = reject;
+  });
+  var request = new XMLHttpRequest();
+  request.open('GET', url, true);
+  request.responseType = 'arraybuffer';
+
+  request.onload = function () {
+    if (request.response) {
+      fulfill(new Uint8Array(request.response));
+    } else {
+      refuse('Empty response or other exceptions.');
+    }
+  };
+
+  request.onerror = function (e) {
+    return refuse(e);
+  };
+
+  request.send();
+  return promise;
+}
+
+exports.fetchFileAsBuffer = fetchFileAsBuffer;
+},{}],"node_modules/promise-a-plus/promise.js":[function(require,module,exports) {
+var process = require("process");
+'use strict';
+
+var PENDING = 0;
+var FULFILLED = 1;
+var REJECTED = 2;
+var nextTick = setTimeout;
+
+if (typeof setImmediate === 'function') {
+  nextTick = setImmediate;
+} else if (typeof process === 'object' && typeof process.nextTick === 'function') {
+  nextTick = process.nextTick;
+}
+
+function Promise(executor) {
+  var state = PENDING; // store value once FULFILLED or REJECTED
+
+  var value = null; // store sucess & failure handlers
+
+  var handlers = [];
+
+  function fulfill(result) {
+    state = FULFILLED;
+    value = result;
+    handlers.forEach(handle);
+    handlers = null;
+  }
+
+  function reject(error) {
+    state = REJECTED;
+    value = error;
+    handlers.forEach(handle);
+    handlers = null;
+  }
+
+  function resolve(result) {
+    try {
+      var then = getThen(result);
+
+      if (then) {
+        doResolve(function () {
+          then.apply(result, arguments);
+        }, resolve, reject);
+        return;
+      }
+
+      fulfill(result);
+    } catch (e) {
+      reject(e);
+    }
+  }
+
+  function handle(handler) {
+    if (state === PENDING) {
+      handlers.push(handler);
+    } else {
+      if (state === FULFILLED && typeof handler.onFulfilled === 'function') {
+        handler.onFulfilled(value);
+      }
+
+      if (state === REJECTED && typeof handler.onRejected === 'function') {
+        handler.onRejected(value);
+      }
+    }
+  }
+
+  this.done = function (onFulfilled, onRejected) {
+    // ensure we are always asynchronous
+    nextTick(function () {
+      handle({
+        onFulfilled: onFulfilled,
+        onRejected: onRejected
+      });
+    }, 0);
+  };
+
+  var then = function (onFulfilled, onRejected) {
+    var self = this;
+    var res;
+    var npromise = new Promise(function (resolve, reject) {
+      return self.done(function (result) {
+        if (typeof onFulfilled === 'function') {
+          try {
+            res = onFulfilled(result);
+
+            if (res === npromise) {
+              return reject(new TypeError('The `promise` and `x` refer to the same object.'));
+            }
+
+            return resolve(res);
+          } catch (e) {
+            return reject(e);
+          }
+        } else {
+          return resolve(result);
+        }
+      }, function (error) {
+        if (typeof onRejected === 'function') {
+          try {
+            res = onRejected(error);
+
+            if (res === npromise) {
+              return reject(new TypeError('The `promise` and `x` refer to the same object.'));
+            }
+
+            return resolve(res);
+          } catch (ex) {
+            return reject(ex);
+          }
+        } else {
+          return reject(error);
+        }
+      });
+    });
+    return npromise;
+  };
+
+  this.then = then;
+
+  this.catch = function (onRejected) {
+    return then.call(this, undefined, onRejected);
+  };
+
+  doResolve(executor, resolve, reject);
+}
+/**
+ * Check if a value is a Promise and, if it is,
+ * return the `then` method of that promise.
+ *
+ * @param {Promise|Any} value
+ * @return {Function|Null}
+ */
+
+
+function getThen(value) {
+  var type = typeof value;
+  var then;
+
+  if (value && (type === 'object' || type === 'function')) {
+    then = value.then;
+
+    if (typeof then === 'function') {
+      return then;
+    }
+  }
+
+  return null;
+}
+/**
+ * Take a potentially misbehaving resolver function and make sure
+ * onFulfilled and onRejected are only called once.
+ *
+ * ensure asynchronous execution of onFulfilled/onRejected
+ *
+ * @param {Function} fn A resolver function that may not be trusted
+ * @param {Function} onFulfilled
+ * @param {Function} onRejected
+ */
+
+
+function doResolve(fn, onFulfilled, onRejected) {
+  var done = false;
+
+  try {
+    fn(function (value) {
+      if (done) {
+        return;
+      }
+
+      done = true;
+      nextTick(function () {
+        onFulfilled(value);
+      }, 0);
+    }, function (reason) {
+      if (done) {
+        return;
+      }
+
+      done = true;
+      nextTick(function () {
+        onRejected(reason);
+      }, 0);
+    });
+  } catch (e) {
+    if (done) {
+      return;
+    }
+
+    done = true;
+    nextTick(function () {
+      onRejected(e);
+    }, 0);
+  }
+}
+
+Promise.resolve = function (value) {
+  return new Promise(function (resolve, reject) {
+    resolve(value);
+  });
+};
+
+Promise.reject = function (reason) {
+  return new Promise(function (resolve, reject) {
+    reject(reason);
+  });
+};
+/**
+ * Promise.all
+ * returns a promise that resolves when all of the promises in the iterable argument
+ * have resolved, or rejects with the reason of the first passed promise that rejects.
+ *
+ * support Promise.all(''), Promise.all(promises) and so on.
+ *
+ * @param  {Iterable} iterable iterable object, like Array, String
+ * @return {Promise}           promise
+ */
+
+
+Promise.all = function (iterable) {
+  var results, len, promise, i;
+  var resolved = 0;
+
+  if (iterable == null || typeof iterable.length !== 'number') {
+    throw new Error('ArgumentsError: argument should be iterable.');
+  }
+
+  len = iterable.length;
+  return len === 0 ? Promise.resolve([]) : new Promise(function (resolve, reject) {
+    results = new Array(len);
+
+    for (i = 0; i < len; i++) {
+      (function (i) {
+        promise = iterable[i];
+
+        if (!(promise instanceof Promise)) {
+          promise = Promise.resolve(promise);
+        }
+
+        promise.catch(function (reason) {
+          reject(reason);
+        });
+        promise.then(function (value) {
+          results[i] = value;
+
+          if (++resolved === len) {
+            resolve(results);
+          }
+        });
+      })(i);
+    }
+  });
+};
+/**
+ * Promise.race
+ * Returns a promise that resolves or rejects as soon as one of the promises
+ * in the iterable resolves or rejects,
+ * with the value or reason from that promise.
+ *
+ * @param  {Iterable} iterable iterable object, like Array, String
+ * @return {Promise}           promise
+ */
+
+
+Promise.race = function (iterable) {
+  var deferred, len, i, promise;
+
+  if (iterable == null || typeof iterable.length !== 'number') {
+    throw new Error('ArgumentsError: argument should be iterable.');
+  }
+
+  deferred = Promise.deferred();
+  len = iterable.length;
+
+  for (i = 0; i < len; i++) {
+    promise = iterable[i];
+
+    if (promise instanceof Promise) {
+      promise.then(function (value) {
+        deferred.resolve(value);
+      }, function (reason) {
+        deferred.reject(reason);
+      });
+    } else {
+      // if not promise, immediately resolve result promise
+      deferred.resolve(promise);
+      break;
+    }
+  }
+
+  return deferred.promise;
+};
+/**
+ * Promise.deferred
+ * return the `deferred` object binding to a promise.
+ * And you can control the promise via `deferred.resolve`/`deferred.reject`.
+ *
+ * @param {Promise|Any} value
+ * @return {Function|Null}
+ */
+
+
+Promise.deferred = function () {
+  var deferred = {};
+  deferred.promise = new Promise(function (resolve, reject) {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+  return deferred;
+}; // Official API (especially chrome) is Promise.defer
+// so just add Promise.defer and let it refer to Promise.deferred
+
+
+Promise.defer = Promise.deferred;
+module.exports = Promise;
+},{"process":"../../../../../../../../usr/lib/node_modules/parcel-bundler/node_modules/process/browser.js"}],"node_modules/id3-parser/lib/universal/index.js":[function(require,module,exports) {
+var global = arguments[3];
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var index_1 = require("../index");
+
+var helpers_1 = require("./helpers");
+
+function getGlobal() {
+  var g;
+
+  if (typeof window === 'object' && window.window === window) {
+    g = window;
+  } else if (typeof global === 'object' && global.global === global) {
+    g = global;
+  } else {
+    // Get global.
+    (0, eval)('this.__GLOBAL__ = this;');
+    g = __GLOBAL__;
+  }
+
+  return g;
+}
+
+var GLOBAL = getGlobal();
+
+if (!GLOBAL.Promise) {
+  // tslint:disable-next-line:no-var-requires
+  GLOBAL.Promise = require('promise-a-plus');
+}
+
+function uParse(bytes) {
+  var promise;
+
+  if (GLOBAL.File && bytes instanceof GLOBAL.File) {
+    promise = helpers_1.convertFileToBuffer(bytes);
+  } else if (typeof bytes === 'string') {
+    promise = GLOBAL.XMLHttpRequest ? helpers_1.fetchFileAsBuffer(bytes) : Promise.reject('only browser side support argument as string.');
+  } else {
+    promise = Promise.resolve(bytes);
+  }
+
+  return promise.then(function (arr) {
+    if (!arr || !arr.length) {
+      throw new Error('invalid argument, or no enough data.');
+    }
+
+    return index_1.parse(arr);
+  }).then(function (res) {
+    if (res === false) {
+      throw new Error('invalid binary bytes to parse.');
+    }
+
+    return res;
+  });
+}
+
+exports.default = uParse;
+},{"../index":"node_modules/id3-parser/lib/index.js","./helpers":"node_modules/id3-parser/lib/universal/helpers.js","promise-a-plus":"node_modules/promise-a-plus/promise.js"}],"src/components/FileList.vue":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16279,6 +17533,12 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var _vueAplayer = _interopRequireDefault(require("vue-aplayer"));
+
+var _id3Parser = require("id3-parser");
+
+var _helpers = require("id3-parser/lib/universal/helpers");
+
+var _universal = _interopRequireDefault(require("id3-parser/lib/universal"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -16296,6 +17556,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 //
 //
+//
+function arrayBufferToBase64(buffer) {
+  var binary = '';
+  var bytes = new Uint8Array(buffer);
+  var len = bytes.byteLength;
+
+  for (var i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+
+  return window.btoa(binary);
+}
+
 var _default = {
   name: 'FileList',
   components: {
@@ -16304,8 +17577,19 @@ var _default = {
   props: ['music'],
   data: function data() {
     return {
-      mutex: true
+      mutex: true,
+      image: null
     };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    (0, _helpers.fetchFileAsBuffer)('https://cors-anywhere.herokuapp.com/' + this.music.url).then(_id3Parser.parse).then(function (tag) {
+      if (tag.image) {
+        var encoded = arrayBufferToBase64(tag.image.data);
+        _this.image = "data:".concat(tag.image.mime, ";base64,").concat(encoded);
+      }
+    });
   }
 };
 exports.default = _default;
@@ -16331,7 +17615,8 @@ exports.default = _default;
           music: {
             title: _vm.music.title,
             artist: _vm.music.artist,
-            src: _vm.music.url
+            src: _vm.music.url,
+            pic: this.image
           }
         }
       })
@@ -16368,7 +17653,7 @@ render._withStripped = true
         
       }
     })();
-},{"vue-aplayer":"node_modules/vue-aplayer/dist/vue-aplayer.min.js","_css_loader":"../../../../../../../../usr/lib/node_modules/parcel-bundler/src/builtins/css-loader.js","vue-hot-reload-api":"node_modules/vue-hot-reload-api/dist/index.js","vue":"node_modules/vue/dist/vue.runtime.esm.js"}],"src/components/Home.vue":[function(require,module,exports) {
+},{"vue-aplayer":"node_modules/vue-aplayer/dist/vue-aplayer.min.js","id3-parser":"node_modules/id3-parser/lib/index.js","id3-parser/lib/universal/helpers":"node_modules/id3-parser/lib/universal/helpers.js","id3-parser/lib/universal":"node_modules/id3-parser/lib/universal/index.js","_css_loader":"../../../../../../../../usr/lib/node_modules/parcel-bundler/src/builtins/css-loader.js","vue-hot-reload-api":"node_modules/vue-hot-reload-api/dist/index.js","vue":"node_modules/vue/dist/vue.runtime.esm.js"}],"src/components/Home.vue":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16397,7 +17682,8 @@ var _default = {
   props: ['musics'],
   components: {
     FileList: _FileList.default
-  }
+  },
+  created: function created() {}
 };
 exports.default = _default;
         var $b3f104 = exports.default || module.exports;
@@ -16429,7 +17715,7 @@ exports.default = _default;
           _vm._l(_vm.musics, function(music) {
             return _c(
               "div",
-              { staticClass: "column is-half" },
+              { key: music._id, staticClass: "column is-half" },
               [_c("FileList", { key: music._id, attrs: { music: music } })],
               1
             )
@@ -32549,7 +33835,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43207" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "37701" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
