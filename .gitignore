@@ -61,6 +61,7 @@ typings/
 .next
 .cache
 
+<<<<<<< HEAD
 /dist
 dist
 dist/
@@ -68,3 +69,6 @@ dist/*
 dist/main.*
 dist/index.html
 !docs/dist
+=======
+dist/
+>>>>>>> rebase
