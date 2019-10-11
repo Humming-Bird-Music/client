@@ -123,6 +123,7 @@ export default {
       this.isManageMusic = !e
     },
     manageBtn(e) {
+      this.fetchMyMusic()
       this.isManageMusic = e
       this.isUpload = !e
       this.isBrowse = !e
