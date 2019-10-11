@@ -1,59 +1,32 @@
 <template>
-  <b-navbar style="margin-bottom: 3rem">
-    <template slot="end">
-      <section>
-        <p class="content"><b>Selected:</b> {{ selected }}</p>
-        <b-field label="Find a JS framework">
-          <b-autocomplete
-            rounded
-            v-model="name"
-            :data="filteredDataArray"
-            placeholder="e.g. jQuery"
-            icon="magnify"
-            @select="option => (selected = option)"
-          >
-            <template slot="empty"
-              >No results found</template
-            >
-          </b-autocomplete>
-        </b-field>
-      </section>
-    </template>
-  </b-navbar>
+  <div>
+    <b-navbar style="margin-bottom: 3rem">
+      <template slot="end">
+        <section>
+          <form @submit.prevent="handleSearch">
+            <b-field label="Find Music">
+              <b-input rounded placeholder="e.g. Poison Snail" icon="magnify" v-model="q"></b-input>
+            </b-field>
+          </form>
+        </section>
+      </template>
+    </b-navbar>
+  </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data() {
     return {
-      data: [
-        'Angular',
-        'Angular 2',
-        'Aurelia',
-        'Backbone',
-        'Ember',
-        'jQuery',
-        'Meteor',
-        'Node.js',
-        'Polymer',
-        'React',
-        'RxJS',
-        'Vue.js'
-      ],
-      name: '',
-      selected: null
+      q: ''
     }
   },
-  computed: {
-    filteredDataArray() {
-      return this.data.filter(option => {
-        return (
-          option
-            .toString()
-            .toLowerCase()
-            .indexOf(this.name.toLowerCase()) >= 0
-        )
-      })
+  methods: {
+    handleSearch() {
+      console.log(this.q)
+      this.$emit('q', this.q)
     }
   }
 }
