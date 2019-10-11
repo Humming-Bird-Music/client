@@ -3,7 +3,7 @@
     <div v-if="!musics.length" style="margin: auto; text-align: center">No data</div>
 
     <div v-if="musics.length" style="flex-wrap: wrap" class="columns is-desktop">
-      <div class="column is-half" v-for="music in musics">
+      <div class="column is-half" v-for="music in musics" :key="music._id">
         <FileList :key="music._id" :music="music"></FileList>
       </div>
     </div>
@@ -18,6 +18,7 @@ export default {
   props: ['musics'],
   components: {
     FileList
-  }
+  },
+  created() {}
 }
 </script>
