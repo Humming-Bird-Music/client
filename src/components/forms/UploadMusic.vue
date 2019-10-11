@@ -15,20 +15,18 @@
       </b-field>
 
       <section>
-        <!-- <b-field> -->
-        <!--   <b-upload drag-drop> -->
-        <!--     <section class="section"> -->
-        <!--       <div class="content has-text-centered"> -->
-        <!--         <p> -->
-        <!--           <b-icon icon="upload" size="is-large"></b-icon> -->
-        <!--         </p> -->
-        <!--         <p>Drop your files here or click to upload</p> -->
-        <!--       </div> -->
-        <!--     </section> -->
-        <!--   </b-upload> -->
-        <!-- </b-field> -->
-
-        <input type="file" ref="file" @change="onSelect" />
+        <b-field>
+          <b-upload v-model="music" drag-drop>
+            <section class="section">
+              <div class="content has-text-centered">
+                <p>
+                  <b-icon icon="upload" size="is-large"></b-icon>
+                </p>
+                <p>Drop your files here or click to upload</p>
+              </div>
+            </section>
+          </b-upload>
+        </b-field>
 
         <div class="tags" v-if="music.name">
           <span class="tag is-primary">
@@ -38,7 +36,7 @@
         </div>
       </section>
 
-      <div class="buttons">
+      <div class="buttons" style="margin-top: 3rem">
         <b-button native-type="submit" type="is-info">Upload</b-button>
       </div>
     </form>
@@ -56,17 +54,12 @@ export default {
       title: '',
       artist: '',
       album: '',
-      music: ''
+      music: []
     }
   },
   methods: {
     deleteDropFile() {
       this.music = []
-    },
-    onSelect() {
-      const file = this.$refs.file.files[0]
-      console.log(file)
-      this.music = file
     },
     handleUpload() {
       swal.fire({
@@ -74,15 +67,28 @@ export default {
           swal.showLoading()
         }
       })
-      let formData = new FormData()
+      /*this.$buefy.snackbar.open({
+        // message: 'Yellow button and positioned on top, click to close',
+        message: `Uploading ${this.title}...`,
+        type: 'is-info',
+        position: 'is-top-right',
+        actionText: 'Retry',
+        indefinite: true,
+        onAction: () => {
+          this.$buefy.toast.open({
+            message: 'Action pressed',
+            queue: false
+          })
+        }
+      })*/
+      const formData = new FormData()
       formData.append('music', this.music)
       formData.set('title', this.title)
       formData.set('artist', this.artist)
       formData.set('album', this.album)
-      // console.log(formData.append)
       axios({
         method: 'post',
-        url: 'http://localhost:3000/musics',
+        url: 'http://humming-bird.crowfx.online/musics',
         data: formData,
         headers: {
           authorization: localStorage.getItem('token'),
@@ -90,7 +96,6 @@ export default {
         }
       })
         .then(({ data }) => {
-          console.log(data)
           swal.fire({
             title: 'Uploaded Successfully',
             timer: 1200
@@ -98,7 +103,6 @@ export default {
           this.$emit('uploaded', true)
         })
         .catch(err => {
-          console.log(err.response)
           swal.fire({
             title: `${err.response.data.message}`,
             showCloseButton: true
