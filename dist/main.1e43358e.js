@@ -16561,11 +16561,10 @@ var _default = {
       formData.append('music', this.music);
       formData.set('title', this.title);
       formData.set('artist', this.artist);
-      formData.set('album', this.album); // console.log(formData.append)
-
+      formData.set('album', this.album);
       (0, _axios.default)({
         method: 'post',
-        url: 'http://localhost:3000/musics',
+        url: 'http://humming-bird.crowfx.online/musics',
         data: formData,
         headers: {
           authorization: localStorage.getItem('token'),

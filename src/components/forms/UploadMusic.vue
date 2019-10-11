@@ -79,10 +79,9 @@ export default {
       formData.set('title', this.title)
       formData.set('artist', this.artist)
       formData.set('album', this.album)
-      // console.log(formData.append)
       axios({
         method: 'post',
-        url: 'http://localhost:3000/musics',
+        url: 'http://humming-bird.crowfx.online/musics',
         data: formData,
         headers: {
           authorization: localStorage.getItem('token'),
