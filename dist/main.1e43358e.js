@@ -16524,6 +16524,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 //
 //
+//
+//
+//
+//
 var _default = {
   name: 'UploadMusic',
   data: function data() {
@@ -16645,7 +16649,13 @@ exports.default = _default;
         _vm._v(" "),
         _c(
           "b-field",
-          { attrs: { label: "Artist" } },
+          {
+            attrs: {
+              label: "Artist",
+              type: { "is-danger": !_vm.artist },
+              message: { "Artist in required": !_vm.artist }
+            }
+          },
           [
             _c("b-input", {
               attrs: {

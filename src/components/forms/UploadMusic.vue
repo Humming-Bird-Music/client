@@ -6,7 +6,11 @@
         <b-input v-model="title" type="text" placeholder="Poison Snail" maxlength="30"></b-input>
       </b-field>
 
-      <b-field label="Artist">
+      <b-field
+        label="Artist"
+        :type="{ 'is-danger': !artist }"
+        :message="{ 'Artist in required': !artist }"
+      >
         <b-input v-model="artist" type="text" placeholder="Sinta ft. Jojo" maxlength="30"></b-input>
       </b-field>
 
