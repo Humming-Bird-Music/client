@@ -4,7 +4,8 @@
   "description": "Humming Bird Client",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel index.html"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,8 @@
     "buefy": "^0.8.5",
     "sweetalert2": "^8.18.3",
     "toastr": "^2.1.4",
-    "vue": "^2.6.10",
+    "vue": "^2.5.13",
+    "vue-aplayer": "^1.6.1",
     "vue-hot-reload-api": "^2.3.4"
   },
   "devDependencies": {
