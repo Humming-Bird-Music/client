@@ -15,7 +15,7 @@
             ></b-loading>
             <Home v-if="!isLoadingMusics" :musics="musics"></Home>
           </div>
-          <div v-if="isUpload">
+          <div v-if="isUpload" style="margin-top: 140px;">
             <UploadMusic @uploaded="afterUpload"></UploadMusic>
           </div>
         </div>
