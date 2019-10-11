@@ -15,20 +15,18 @@
       </b-field>
 
       <section>
-        <!-- <b-field> -->
-        <!--   <b-upload drag-drop> -->
-        <!--     <section class="section"> -->
-        <!--       <div class="content has-text-centered"> -->
-        <!--         <p> -->
-        <!--           <b-icon icon="upload" size="is-large"></b-icon> -->
-        <!--         </p> -->
-        <!--         <p>Drop your files here or click to upload</p> -->
-        <!--       </div> -->
-        <!--     </section> -->
-        <!--   </b-upload> -->
-        <!-- </b-field> -->
-
-        <input type="file" ref="file" @change="onSelect" />
+        <b-field>
+          <b-upload v-model="music" drag-drop>
+            <section class="section">
+              <div class="content has-text-centered">
+                <p>
+                  <b-icon icon="upload" size="is-large"></b-icon>
+                </p>
+                <p>Drop your files here or click to upload</p>
+              </div>
+            </section>
+          </b-upload>
+        </b-field>
 
         <div class="tags" v-if="music.name">
           <span class="tag is-primary">
@@ -38,7 +36,7 @@
         </div>
       </section>
 
-      <div class="buttons">
+      <div class="buttons" style="margin-top: 3rem">
         <b-button native-type="submit" type="is-info">Upload</b-button>
       </div>
     </form>
@@ -56,31 +54,41 @@ export default {
       title: '',
       artist: '',
       album: '',
-      music: ''
+      music: []
     }
   },
   methods: {
     deleteDropFile() {
       this.music = []
     },
-    onSelect() {
-      const file = this.$refs.file.files[0]
-      console.log(file)
-      this.music = file
-    },
     handleUpload() {
-      swal.fire({
+      /* swal.fire({
         onOpen() {
           swal.showLoading()
         }
+      }) */
+      this.$buefy.snackbar.open({
+        // message: 'Yellow button and positioned on top, click to close',
+        message: `
+          <b-button native-type="submit" type="is-info">Upload</b-button>
+        `,
+        type: 'is-info',
+        position: 'is-top-right',
+        actionText: 'Retry',
+        indefinite: true,
+        onAction: () => {
+          this.$buefy.toast.open({
+            message: 'Action pressed',
+            queue: false
+          })
+        }
       })
-      let formData = new FormData()
+      const formData = new FormData()
       formData.append('music', this.music)
       formData.set('title', this.title)
       formData.set('artist', this.artist)
       formData.set('album', this.album)
-      // console.log(formData.append)
-      axios({
+      /*axios({
         method: 'post',
         url: 'http://localhost:3000/musics',
         data: formData,
@@ -103,7 +111,7 @@ export default {
             title: `${err.response.data.message}`,
             showCloseButton: true
           })
-        })
+        })*/
     }
   }
 }
