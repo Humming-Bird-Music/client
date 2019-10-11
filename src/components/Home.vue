@@ -18,6 +18,7 @@ export default {
   props: ['musics'],
   components: {
     FileList
-  }
+  },
+  created() {}
 }
 </script>
