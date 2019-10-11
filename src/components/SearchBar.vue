@@ -44,6 +44,11 @@ export default {
       selected: null
     }
   },
+  method: {
+    searchMusic() {
+      this.$emit('searcMusic', this.name)
+    }
+  },
   computed: {
     filteredDataArray() {
       return this.data.filter(option => {

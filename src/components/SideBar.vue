@@ -14,8 +14,8 @@
       <b-menu-item label="Upload" @click="upload" icon="upload"> </b-menu-item>
     </b-menu-list>
     <b-menu-list label="Actions">
-      <b-menu-item @click="handleLogout" icon="logout" label="Logout"></b-menu-item>
-      <b-menu-item icon="share" label="Share"></b-menu-item>
+      <b-menu-item @click="manageMusic" icon="share" label="Manage Music"></b-menu-item>
+      <b-menu-item class="menu-item" @click="handleLogout" icon="logout" label="Logout"></b-menu-item>
     </b-menu-list>
   </b-menu>
 </template>
@@ -38,6 +38,9 @@ export default {
     },
     upload() {
       this.$emit('upload', true)
+    },
+    manageMusic() {
+      this.$emit('manage', true)
     }
   }
 }

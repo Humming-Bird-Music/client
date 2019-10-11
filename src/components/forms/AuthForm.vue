@@ -16,9 +16,11 @@
               <b-field label="Username">
                 <b-input v-model="username" placeholder="johndoe" maxlength="30"></b-input>
               </b-field>
+              
+                <b-input style="display: none"></b-input>
 
               <b-field label="Email">
-                <b-input v-model="email" type="email" placeholder="john@doe.com" maxlength="30"></b-input>
+                <b-input v-model="email"  placeholder="john@doe.com" maxlength="30"></b-input>
               </b-field>
 
               <b-field label="Password">
@@ -113,7 +115,6 @@ export default {
         })
     },
     handleLogin() {
-      console.log('============ Masuk ============')
       axios({
         method: 'post',
         url: `${host}/users/login`,

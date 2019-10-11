@@ -3,11 +3,16 @@
     <div v-if="isLogin" class="container">
       <div class="columns">
         <div class="column is-one-fifth">
-          <SideBar @browse="browseBtn" @upload="uploadBtn" @c-is-login="checkLogin"></SideBar>
+          <SideBar
+            @manage="manageBtn"
+            @browse="browseBtn"
+            @upload="uploadBtn"
+            @c-is-login="checkLogin"
+          ></SideBar>
         </div>
         <div class="column" style="border: 0px solid red">
           <div v-if="isBrowse">
-            <SearchBar></SearchBar>
+            <SearchBar ></SearchBar>
             <b-loading
               :is-full-page="isFullPage"
               :active.sync="isLoadingMusics"
@@ -17,6 +22,9 @@
           </div>
           <div v-if="isUpload" style="margin-top: 140px;">
             <UploadMusic @uploaded="afterUpload"></UploadMusic>
+          </div>
+          <div v-if="isManageMusic" style="margin-top: 140px;">
+            <ManageMusic :myMusics="myMusics"></ManageMusic>
           </div>
         </div>
       </div>
@@ -37,6 +45,7 @@ import AuthForm from './components/forms/AuthForm.vue'
 import SearchBar from './components/SearchBar.vue'
 import Home from './components/Home.vue'
 import UploadMusic from './components/forms/UploadMusic.vue'
+import ManageMusic from './components/ManageMusic.vue'
 
 export default {
   name: 'App',
@@ -45,7 +54,8 @@ export default {
     AuthForm,
     SearchBar,
     Home,
-    UploadMusic
+    UploadMusic,
+    ManageMusic
   },
   data() {
     return {
@@ -54,8 +64,9 @@ export default {
       isLoadingMusics: true,
       isBrowse: true,
       isUpload: true,
+      isManageMusic: false,
       musics: [],
-      musicsUser: []
+      myMusics: []
     }
   },
   methods: {
@@ -66,7 +77,6 @@ export default {
         url: 'http://humming-bird.crowfx.online/musics'
       })
         .then(({ data: musics }) => {
-          console.log(musics)
           this.musics = musics
           this.isLoadingMusics = false
         })
@@ -77,7 +87,7 @@ export default {
           })
         })
     },
-    fetchByUser(){
+    fetchMyMusic() {
       axios({
         method: 'get',
         // url: 'http://localhost:3000/musics'
@@ -87,8 +97,7 @@ export default {
         }
       })
         .then(({ data: musics }) => {
-          console.log(musics)
-          this.musicsUser = musics
+          this.myMusics = musics
         })
         .catch(err => {
           swal.fire({
@@ -98,17 +107,23 @@ export default {
         })
     },
     checkLogin(e) {
-      console.log(e)
       this.isLogin = e
     },
     browseBtn(e) {
       this.isBrowse = e
       this.isUpload = !e
+      this.isManageMusic = !e
       this.fetchMusic()
     },
     uploadBtn(e) {
-      this.isBrowse = !e
       this.isUpload = e
+      this.isBrowse = !e
+      this.isManageMusic = !e
+    },
+    manageBtn(e) {
+      this.isManageMusic = e
+      this.isUpload = !e
+      this.isBrowse = !e
     },
     afterUpload(e) {
       this.browseBtn(e)
@@ -116,8 +131,8 @@ export default {
   },
   mounted() {
     this.fetchMusic()
-    this.fetchByUser()
     if (localStorage.getItem('token')) {
+      this.fetchMyMusic()
       this.isLogin = true
       this.isUpload = false
     } else {
