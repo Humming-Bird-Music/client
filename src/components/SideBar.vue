@@ -15,7 +15,7 @@
     </b-menu-list>
     <b-menu-list label="Actions">
       <b-menu-item @click="manageMusic" icon="share" label="Manage Music"></b-menu-item>
-      <b-menu-item @click="handleLogout" icon="logout" label="Logout"></b-menu-item>
+      <b-menu-item class="menu-item" @click="handleLogout" icon="logout" label="Logout"></b-menu-item>
     </b-menu-list>
   </b-menu>
 </template>

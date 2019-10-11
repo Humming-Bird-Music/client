@@ -12,7 +12,7 @@
         </div>
         <div class="column" style="border: 0px solid red">
           <div v-if="isBrowse">
-            <SearchBar></SearchBar>
+            <SearchBar ></SearchBar>
             <b-loading
               :is-full-page="isFullPage"
               :active.sync="isLoadingMusics"
@@ -20,10 +20,10 @@
             ></b-loading>
             <Home v-if="!isLoadingMusics" :musics="musics"></Home>
           </div>
-          <div v-if="isUpload">
+          <div v-if="isUpload" style="margin-top: 140px;">
             <UploadMusic @uploaded="afterUpload"></UploadMusic>
           </div>
-          <div v-if="isManageMusic">
+          <div v-if="isManageMusic" style="margin-top: 140px;">
             <ManageMusic :myMusics="myMusics"></ManageMusic>
           </div>
         </div>
@@ -77,26 +77,36 @@ export default {
         url: 'http://humming-bird.crowfx.online/musics'
       })
         .then(({ data: musics }) => {
-          console.log(musics)
           this.musics = musics
           this.isLoadingMusics = false
         })
         .catch(err => {
           swal.fire({
-            title: `${err.response.data}`,
+            title: `${err.response.data.message}`,
             showCloseButton: true
           })
         })
     },
     fetchMyMusic() {
-      console.log('asd')
-      /*axios({
+      axios({
         method: 'get',
-        url: 'urlfile'
-      })*/
+        // url: 'http://localhost:3000/musics'
+        url: `http://humming-bird.crowfx.online/musics/user`,
+        headers: {
+          authorization: localStorage.getItem('token')
+        }
+      })
+        .then(({ data: musics }) => {
+          this.myMusics = musics
+        })
+        .catch(err => {
+          swal.fire({
+            title: `${err.response.data.message}`,
+            showCloseButton: true
+          })
+        })
     },
     checkLogin(e) {
-      console.log(e)
       this.isLogin = e
     },
     browseBtn(e) {
@@ -122,6 +132,7 @@ export default {
   mounted() {
     this.fetchMusic()
     if (localStorage.getItem('token')) {
+      this.fetchMyMusic()
       this.isLogin = true
       this.isUpload = false
     } else {

@@ -13,7 +13,7 @@
     </aplayer>
     <nav class="level is-mobile">
       <div class="level-left">
-        <b-dropdown aria-role="list">
+        <b-dropdown aria-role="list" class="share-bottom">
           <span class="is-primary" slot="trigger">
             <span class="icon is-small">
               <i class="fas fa-share" aria-hidden="true"></i>
@@ -103,3 +103,13 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .share-bottom{
+    margin: 5px; 
+    cursor:pointer;
+  }
+  .share-bottom:hover{
+    color: #7957D5;
+  }
+</style>

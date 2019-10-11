@@ -2,8 +2,8 @@
   <div>
     <div v-if="!musics.length" style="margin: auto; text-align: center">No data</div>
 
-    <div v-if="musics.length" style="flex-wrap: wrap" class="columns is-desktop">
-      <div class="column is-half" v-for="music in musics" :key="music._id">
+    <div v-if="musics.length" style="flex-wrap: wrap; margin-top: -35px;" class="columns is-desktop">
+      <div class="column is-half" v-for="music in musics">
         <FileList :key="music._id" :music="music"></FileList>
       </div>
     </div>
